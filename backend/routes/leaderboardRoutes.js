@@ -1,10 +1,5 @@
 import express from 'express';
-import User from '../models/User.js';
+import { getLeaderboard } from '../controllers/leaderboardController.js';
 const router = express.Router();
-
-router.get('/', async (req, res) => {
-  const top = await User.find().sort({ totalPoints: -1 }).limit(10).select('username totalPoints');
-  res.json(top);
-});
-
+router.get('/', getLeaderboard);
 export default router;
