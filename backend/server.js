@@ -1,55 +1,49 @@
 import express from 'express';
 import http from 'http';
-import { Server } from 'socket.io';
 import mongoose from 'mongoose';
-import cors from 'cors';
 import dotenv from 'dotenv';
-import EventEmitter from 'events';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import cors from 'cors';
+import { initSocket, io, eventBus } from './utils/socket.js';
+
 import authRoutes from './routes/authRoutes.js';
 import labRoutes from './routes/labRoutes.js';
 import leaderboardRoutes from './routes/leaderboardRoutes.js';
+import badgeRoutes from './routes/badgeRoutes.js';
+import userRoutes from './routes/userRoutes.js';
+import notificationRoutes from './routes/notificationRoutes.js';
 
 dotenv.config();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public')));
 
-const server = http.createServer(app);
-export const io = new Server(server, { cors: { origin: '*' } });
-
-// simple event bus for decoupling
-export const eventBus = new EventEmitter();
-
-// Socket.IO connections and rooms
-io.on('connection', (socket) => {
-  console.log('socket connected', socket.id);
-  socket.on('subscribeUser', (userId) => {
-    socket.join(`user:${userId}`);
-  });
-  socket.on('joinLeaderboard', () => {
-    socket.join('leaderboard');
-  });
-});
-
-// Broadcast bus -> socket mapping
-eventBus.on('notify:user', ({ userId, payload }) => {
-  io.to(`user:${userId}`).emit('notification', payload);
-});
-eventBus.on('leaderboard:update', (payload) => {
-  io.to('leaderboard').emit('leaderboard:update', payload);
-});
-
-// routes
+// API routes
 app.use('/api/auth', authRoutes);
 app.use('/api/labs', labRoutes);
 app.use('/api/leaderboard', leaderboardRoutes);
+app.use('/api/badges', badgeRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/notifications', notificationRoutes);
 
-const PORT = process.env.PORT || 3000;
-const MONGO = process.env.MONGO_URI || 'mongodb+srv://kingscode25_db_user:tKCfisulOVqMJaWs@starter.emhggc8.mongodb.net/?retryWrites=true&w=majority&appName=Starter';
+// fallback - SPA
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
 
-mongoose.connect(MONGO)
+const PORT = process.env.PORT || 4000;
+const MONGO = process.env.MONGO_URI || 'mongodb://localhost:27017/adwa';
+
+mongoose.connect(MONGO, { })
   .then(()=>{
     console.log('mongo connected');
+    const server = http.createServer(app);
+    initSocket(server); // attaches io and eventBus
     server.listen(PORT, ()=> console.log('server listening', PORT));
   })
-  .catch(err=>console.error(err));
+  .catch(err=>console.error('mongo err', err));
