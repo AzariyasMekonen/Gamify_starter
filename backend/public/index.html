@@ -1,1 +1,77 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Adwa Hackers - Starter</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Adwa Hackers — Starter</h1>
+      <div id="user-area"></div>
+    </header>
 
+    <main>
+      <section class="col">
+        <div class="card">
+          <h2>Auth</h2>
+          <div id="auth">
+            <input id="inp-username" placeholder="username" />
+            <input id="inp-email" placeholder="email (register)" />
+            <input id="inp-password" type="password" placeholder="password" />
+            <div>
+              <button id="btn-register">Register</button>
+              <button id="btn-login">Login</button>
+            </div>
+            <div id="auth-msg" class="muted"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Leaderboard</h2>
+          <ol id="leaderboard"></ol>
+          <button id="btn-refresh-leader">Refresh</button>
+        </div>
+
+        <div class="card">
+          <h2>Badges</h2>
+          <div id="badges"></div>
+        </div>
+      </section>
+
+      <section class="col">
+        <div class="card">
+          <h2>Labs</h2>
+          <div id="labs"></div>
+        </div>
+
+        <div class="card">
+          <h2>Current Session</h2>
+          <div id="session"></div>
+        </div>
+
+      </section>
+
+      <section class="col">
+        <div class="card">
+          <h2>Notifications</h2>
+          <div id="notifications"></div>
+        </div>
+
+        <div class="card">
+          <h2>User</h2>
+          <div id="user-info"></div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <small>Starter demo — not production-ready. Use for learning & prototyping.</small>
+    </footer>
+  </div>
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  <script src="/app.js"></script>
+</body>
+</html>
