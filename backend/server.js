@@ -44,8 +44,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/labs', labRoutes);
 app.use('/api/leaderboard', leaderboardRoutes);
 
-const PORT = process.env.PORT || 4000;
-const MONGO = process.env.MONGO_URI || 'mongodb://localhost:27017/adwa';
+const PORT = process.env.PORT || 3000;
+const MONGO = process.env.MONGO_URI || 'mongodb+srv://kingscode25_db_user:tKCfisulOVqMJaWs@starter.emhggc8.mongodb.net/?retryWrites=true&w=majority&appName=Starter';
 
 mongoose.connect(MONGO)
   .then(()=>{
