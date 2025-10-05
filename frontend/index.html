@@ -1,1 +1,48 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Adwa Notifications Demo</title>
+  <style>
+    body{font-family:sans-serif;background:#f6f7fb;padding:20px}
+    .box{background:white;padding:12px;border-radius:8px;box-shadow:0 6px 18px rgba(10,10,10,0.06);max-width:900px;margin:12px auto}
+    #notifications{display:flex;flex-direction:column;gap:8px}
+    .notif{padding:10px;border-radius:6px;background:#eef2ff;border-left:4px solid #6366f1}
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>Adwa — Notifications demo</h2>
+    <p>Open the console to see socket logs. Use the backend endpoint <code>/api/labs/submit</code> to simulate completing a task (POST JSON).</p>
+    <div><strong>Notifications</strong></div>
+    <div id="notifications"></div>
+  </div>
 
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  <script>
+    const socket = io(window.location.origin.replace(window.location.port, '4000'));
+    const userId = 'demo-user'; // change to real id after login
+    socket.on('connect', ()=>{
+      console.log('connected', socket.id);
+      socket.emit('subscribeUser', userId);
+      socket.emit('joinLeaderboard');
+    });
+    socket.on('notification', (payload) => {
+      console.log('notification', payload);
+      const el = document.createElement('div');
+      el.className = 'notif';
+      el.textContent = '[' + payload.type + '] ' + (payload.points ? ('+'+payload.points+' pts ') : '') + (payload.message || JSON.stringify(payload));
+      document.getElementById('notifications').prepend(el);
+    });
+    socket.on('leaderboard:update', (payload)=>{
+      console.log('leaderboard update', payload);
+      const el = document.createElement('div');
+      el.className = 'notif';
+      el.style.borderLeft = '4px solid #10b981';
+      el.textContent = '[leaderboard] update: ' + (payload.message || JSON.stringify(payload));
+      document.getElementById('notifications').prepend(el);
+    });
+  </script>
+</body>
+</html>
