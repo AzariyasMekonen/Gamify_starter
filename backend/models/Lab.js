@@ -1,11 +1,10 @@
 import mongoose from 'mongoose';
 const LabSchema = new mongoose.Schema({
   title: String,
-  slug: String,
+  slug: { type: String, unique: true },
   description: String,
-  difficulty: { type:String, default:'Medium' },
+  tags: [String],
   tasks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Task' }],
-  isActive: { type: Boolean, default: true },
   createdAt: { type: Date, default: Date.now }
 });
 export default mongoose.model('Lab', LabSchema);
